@@ -1,0 +1,74 @@
+name: iOS Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build iOS Simulator app
+    runs-on: macos-15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Validate required files
+        run: |
+          test -s package.json
+          test -s capacitor.config.ts
+          test -s index.html
+          test -s app.js
+          test -s styles.css
+          node --check app.js
+          node --check functions/api/translate.js
+          node --check functions/api/exchange-rate.js
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install iOS platform package
+        run: npm install @capacitor/ios@^7.4.3 --save
+
+      - name: Prepare web assets
+        run: |
+          mkdir -p www/assets
+          cp index.html app.js styles.css www/
+          [ ! -f manifest.webmanifest ] || cp manifest.webmanifest www/
+          [ ! -f sw.js ] || cp sw.js www/
+          [ ! -d assets ] || cp -R assets/. www/assets/
+
+      - name: Add iOS platform
+        run: |
+          if [ ! -d ios ]; then npx cap add ios; fi
+
+      - name: Sync Capacitor iOS
+        run: npx cap sync ios
+
+      - name: Build for iOS Simulator
+        run: |
+          WORKSPACE=$(find ios -name '*.xcworkspace' -maxdepth 5 | head -n 1)
+          if [ -z "$WORKSPACE" ]; then echo 'No Xcode workspace found'; exit 1; fi
+          xcodebuild -workspace "$WORKSPACE" -scheme App -sdk iphonesimulator -configuration Debug -derivedDataPath "$RUNNER_TEMP/DerivedData" CODE_SIGNING_ALLOWED=NO build
+
+      - name: Upload simulator app
+        uses: actions/upload-artifact@v4
+        with:
+          name: faravahar-ios-simulator-build
+          path: ${{ runner.temp }}/DerivedData/Build/Products/Debug-iphonesimulator/*.app
+          if-no-files-found: error
+          retention-days: 7

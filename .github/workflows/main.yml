@@ -1,0 +1,42 @@
+name: Main - Validate Web App
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate project files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check required files
+        run: |
+          for file in package.json capacitor.config.ts index.html app.js styles.css; do
+            if [ ! -s "$file" ]; then
+              echo "ERROR: Required file missing or empty at repository root: $file"
+              echo 'Ensure you uploaded the CONTENTS of the project folder, not an extra enclosing folder.'
+              exit 1
+            fi
+          done
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check app.js
+          node --check functions/api/translate.js
+          node --check functions/api/exchange-rate.js
+
+      - name: Check package metadata
+        run: node -e "const p=require('./package.json'); if(!p.name || !p.dependencies || !p.dependencies['@capacitor/core']) process.exit(1); console.log('package.json OK:', p.name)"
