@@ -30,12 +30,18 @@ jobs:
         with:
           node-version: "22"
       - name: Validate required files
+        shell: bash
         run: |
-          test -s index.html
-          test -s app.js
-          test -s styles.css
-          test -s manifest.webmanifest
-          test -s assets/faravahar.svg
+          set -euo pipefail
+          for file in index.html app.js styles.css manifest.webmanifest assets/faravahar.svg functions/api/translate.js functions/api/exchange-rate.js; do
+            if [[ ! -s "$file" ]]; then
+              echo "::error file=$file::Required file is missing or empty: $file"
+              echo "Repository root contents:"
+              ls -la
+              exit 1
+            fi
+            echo "OK: $file"
+          done
           node --check app.js
           node --check functions/api/translate.js
           node --check functions/api/exchange-rate.js
@@ -73,8 +79,12 @@ jobs:
         run: |
           for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
             mkdir -p "android/app/src/main/res/mipmap-${density}"
-            cp "assets/android-icons/mipmap-${density}/ic_launcher.png" "android/app/src/main/res/mipmap-${density}/ic_launcher.png"
-            cp "assets/android-icons/mipmap-${density}/ic_launcher_round.png" "android/app/src/main/res/mipmap-${density}/ic_launcher_round.png"
+            launcher="assets/android-icons/mipmap-${density}/ic_launcher.png"
+            round="assets/android-icons/mipmap-${density}/ic_launcher_round.png"
+            if [[ ! -s "$launcher" ]]; then launcher="assets/android-icons/ic_launcher.png"; fi
+            if [[ ! -s "$round" ]]; then round="assets/android-icons/ic_launcher_round.png"; fi
+            cp "$launcher" "android/app/src/main/res/mipmap-${density}/ic_launcher.png"
+            cp "$round" "android/app/src/main/res/mipmap-${density}/ic_launcher_round.png"
           done
           mkdir -p android/app/src/main/res/mipmap-anydpi-v26
           cat > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml <<'EOF'
@@ -85,7 +95,11 @@ jobs:
           </adaptive-icon>
           EOF
           cp android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-          cp assets/android-icons/mipmap-xxxhdpi/ic_launcher_foreground.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
+          if [[ -s assets/android-icons/mipmap-xxxhdpi/ic_launcher_foreground.png ]]; then
+            cp assets/android-icons/mipmap-xxxhdpi/ic_launcher_foreground.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
+          else
+            cp assets/android-icons/ic_launcher.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
+          fi
           mkdir -p android/app/src/main/res/values
           cat > android/app/src/main/res/values/ic_launcher_background.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
