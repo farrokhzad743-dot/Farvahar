@@ -1,0 +1,8 @@
+name = "faravahar-news"
+compatibility_date = "2026-10-22"
+pages_build_output_dir = "."
+
+# Configure a Workers AI binding in the Cloudflare dashboard for Pages:
+# binding name: AI
+# Set TRANSLATION_MODEL to a model available in your account after testing Persian quality.
+# Keep EXCHANGE_RATE_API_KEY as a secret; never commit real credentials.

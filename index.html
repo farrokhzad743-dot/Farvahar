@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#102b25">
+  <meta name="description" content="فروهر؛ روایت دقیق‌تر رویدادهای ایران و جهان">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/assets/faravahar.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <title>فروهر | رسانه خبری</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="صفحه اصلی فروهر">
+        <img src="/assets/faravahar.svg" alt="نشان فروهر" class="brand-mark">
+        <span class="brand-copy"><strong>فروهر</strong><small>رسانه خبری</small></span>
+      </a>
+      <div class="top-actions">
+        <button class="icon-button" id="themeToggle" aria-label="تغییر حالت روشن و تاریک" title="حالت روشن/تاریک">◐</button>
+        <button class="icon-button" id="settingsToggle" aria-label="تنظیمات" title="تنظیمات">⚙</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="welcome-row">
+        <div>
+          <p class="eyebrow">نگاه روشن به جهان</p>
+          <h1>خبر، فراتر از تیتر</h1>
+          <p class="subhead">گزیده‌ای منظم از رویدادهای ایران و جهان</p>
+        </div>
+        <div class="date-chip" id="todayLabel">امروز</div>
+      </section>
+
+      <section class="market-strip" aria-label="بازار ارز">
+        <div class="market-icon">﷼</div>
+        <div class="market-copy"><span>دلار آمریکا</span><small id="rateStatus">نرخ نمونه؛ سرویس زنده تنظیم نشده</small></div>
+        <div class="market-value"><strong id="usdValue">—</strong><small>ریال</small></div>
+      </section>
+
+      <section class="section-block" id="importantSection">
+        <div class="section-heading">
+          <div><span class="section-kicker">منتخب سردبیر</span><h2>خبرهای مهم</h2></div>
+          <span class="section-count" id="importantCount">۰ خبر</span>
+        </div>
+        <div class="featured-grid" id="importantNews"></div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <div><span class="section-kicker">در جریان رویدادها</span><h2>آخرین اخبار</h2></div>
+          <span class="live-dot">به‌ترتیب زمان</span>
+        </div>
+        <div class="toolbar">
+          <label class="searchbox"><span>⌕</span><input id="searchInput" type="search" placeholder="جست‌وجو در خبرها…" autocomplete="off"></label>
+          <div class="category-list" id="categoryList">
+            <button class="category active" data-category="همه">همه</button>
+            <button class="category" data-category="ایران">ایران</button>
+            <button class="category" data-category="جهان">جهان</button>
+            <button class="category" data-category="اقتصاد">اقتصاد</button>
+            <button class="category" data-category="فناوری">فناوری</button>
+            <button class="category" data-category="ورزش">ورزش</button>
+          </div>
+        </div>
+        <div class="news-list" id="newsList"></div>
+        <div class="empty-state hidden" id="emptyState">خبری با این مشخصات پیدا نشد.</div>
+        <p class="demo-note">محتوای فعلی برای نمایش طراحی است و خبر زنده محسوب نمی‌شود.</p>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="ناوبری اصلی">
+      <button class="nav-item selected" data-nav="home"><span>⌂</span><small>خانه</small></button>
+      <button class="nav-item" data-nav="saved"><span>☆</span><small>ذخیره‌شده‌ها</small></button>
+      <button class="nav-item" data-nav="translate"><span>文</span><small>ترجمه</small></button>
+      <button class="nav-item" data-nav="settings"><span>⚙</span><small>تنظیمات</small></button>
+    </nav>
+  </div>
+
+  <dialog id="articleDialog" class="article-dialog">
+    <button class="dialog-close" id="closeArticle" aria-label="بستن">×</button>
+    <div id="articleContent"></div>
+  </dialog>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <button class="dialog-close" id="closeSettings" aria-label="بستن">×</button>
+    <span class="section-kicker">شخصی‌سازی</span><h2>تنظیمات فروهر</h2>
+    <label class="setting-row"><span><strong>ظاهر برنامه</strong><small>روشن، تاریک یا هماهنگ با دستگاه</small></span>
+      <select id="themeSelect"><option value="system">هماهنگ با دستگاه</option><option value="light">روشن</option><option value="dark">تاریک</option></select>
+    </label>
+    <label class="setting-row"><span><strong>نمایش خلاصه خبر</strong><small>نمایش متن کوتاه در فهرست خبرها</small></span><input id="summaryToggle" type="checkbox" checked></label>
+    <label class="setting-row api-setting"><span><strong>نشانی سرور API</strong><small>آدرس HTTPS سرویس فروهر؛ برای نسخه اندروید لازم است</small></span></label>
+    <input id="apiBaseInput" type="url" inputmode="url" placeholder="https://your-pages-project.pages.dev" autocomplete="url">
+    <div class="settings-info"><strong>وضعیت سرویس‌ها</strong><p>اخبار زنده، ترجمه و نرخ ارز تا زمان اتصال منابع واقعی فعال نیستند. برای امنیت، کلیدهای API فقط باید در متغیرهای محرمانه سمت سرور قرار بگیرند.</p></div>
+    <button class="primary-button" id="saveSettings">ذخیره تنظیمات</button>
+  </dialog>
+
+  <dialog id="translateDialog" class="settings-dialog">
+    <button class="dialog-close" id="closeTranslate" aria-label="بستن">×</button>
+    <span class="section-kicker">ابزار زبان</span><h2>ترجمه متن</h2>
+    <p class="subhead">برای جلوگیری از ترجمه ساختگی، این ابزار فقط زمانی نتیجه می‌دهد که سرویس ترجمه روی سرور پیکربندی شده باشد.</p>
+    <textarea id="translateInput" rows="5" placeholder="متن موردنظر را وارد کنید…"></textarea>
+    <button class="primary-button" id="translateButton">ترجمه به فارسی</button>
+    <div id="translateOutput" class="translation-output" aria-live="polite"></div>
+  </dialog>
+  <script src="/app.js" defer></script>
+</body>
+</html>

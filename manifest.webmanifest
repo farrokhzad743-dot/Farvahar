@@ -1,0 +1,16 @@
+{
+  "id": "/",
+  "name": "فروهر | رسانه خبری",
+  "short_name": "فروهر",
+  "description": "اپلیکیشن خبری فارسی فروهر",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f6f2",
+  "theme_color": "#102b25",
+  "icons": [
+    {"src": "/assets/faravahar.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}

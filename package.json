@@ -1,0 +1,19 @@
+{
+  "name": "faravahar-news-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Faravahar Persian news application",
+  "scripts": {
+    "check": "node --check app.js && node --check functions/api/translate.js && node --check functions/api/exchange-rate.js",
+    "android:sync": "cap sync android",
+    "android:open": "cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  },
+  "type": "module"
+}
